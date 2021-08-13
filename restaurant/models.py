@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Dish(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -10,6 +11,7 @@ class Dish(models.Model):
     created_at = models.DateField(auto_now_add=True)
     modified_at = models.DateField(auto_now=True)
     is_vegetarian = models.BooleanField()
+
 
 class Menu(models.Model):
     title = models.CharField(max_length=255)
