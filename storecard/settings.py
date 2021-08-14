@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'storecard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'api_db',
+        'NAME': 'restaurant_db',
         'USER': 'postgres',
         'PASSWORD': 'resto',
         'HOST': '127.0.0.1',
