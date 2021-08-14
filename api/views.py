@@ -57,7 +57,7 @@ class DishDetail(APIView):
 
     def get(self, request, pk, format=None):
         dish = self.get_object(pk)
-        serializer = Dish(dish)
+        serializer = DishSerializer(dish)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
@@ -106,7 +106,7 @@ class MenuDetail(APIView):
 
     def get(self, request, pk, format=None):
         menu = self.get_object(pk)
-        serializer = Menu(menu)
+        serializer = MenuSerializer(menu)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
