@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('dishes', models.ManyToManyField(to='restaurant.Dish')),
+                ('dishes', models.ManyToManyField(to='api.Dish')),
             ],
         ),
     ]

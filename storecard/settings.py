@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'restaurant.apps.RestaurantConfig',
+    'api.apps.apiConfig',
     'debug_toolbar',
     'rest_framework',
 ]
@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'storecard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'restaurant_db',
+        'NAME': 'api_db',
         'USER': 'postgres',
         'PASSWORD': 'resto',
         'HOST': '127.0.0.1',

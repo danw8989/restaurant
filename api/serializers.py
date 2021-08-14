@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from restaurant.models import Menu, Dish
+from api.models import Menu, Dish
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
