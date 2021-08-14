@@ -12,6 +12,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('dishes/', views.ListDishes.as_view()),
+    path('dishes/<int:pk>/', views.DishDetail.as_view()),
     path('menus/', views.ListMenus.as_view()),
     path('menus/<int:pk>/', views.MenuDetail.as_view()),
 ]
