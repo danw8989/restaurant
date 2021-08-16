@@ -4,8 +4,9 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.serializers import DishSerializer, MenuSerializer, UserSerializer, GroupSerializer
-
+from api.serializers import DishSerializer, MenuDetailSerializer, MenuSerializer, UserSerializer, GroupSerializer
+from .perms import IsGetOrIsAuthenticated
+from django.db.models import Count
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -48,6 +49,7 @@ class DishDetail(APIView):
     """
     Retrieve, update or delete a dish instance.
     """
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -78,14 +80,29 @@ class ListMenus(APIView):
     """
     Retrieve list of menus or post a new menu
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsGetOrIsAuthenticated]
 
     def get(self, request, format=None):
-        menus = Menu.objects.all()
+        menus = None
+        if 'sort_by' in request.GET:
+            if request.GET.get('sort_by') == 'title':
+                menus = Menu.objects.all().order_by('title')
+            elif request.GET.get('sort_by_name') == 'dish_count':
+                menus = Menu.objects.all().order_by('dish_count')
+            else:
+                return Response(
+                    {
+                        "Error": "Value of the parameter 'sort_by' cant be other than 'title' or 'dish_count'",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        if len(request.GET) == 0:
+            menus = Menu.objects.all()
         serializer = MenuSerializer(menus, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
+
         serializer = MenuSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -97,6 +114,7 @@ class MenuDetail(APIView):
     """
     Retrieve, update or delete a menu instance.
     """
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -105,8 +123,11 @@ class MenuDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        menu = self.get_object(pk)
-        serializer = MenuSerializer(menu)
+        try:
+            menu = Menu.objects.prefetch_related('dishes').get(pk=pk)
+        except Menu.DoesNotExist:
+            raise Http404
+        serializer = MenuDetailSerializer(menu)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
