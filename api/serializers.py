@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from api.models import Menu, Dish
@@ -30,6 +31,20 @@ class DishSerializer(serializers.ModelSerializer):
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
+
+        fields = ['title',
+                  'description',
+                  'created_at',
+                  'modified_at',
+                  ]
+
+
+class MenuDetailSerializer(serializers.ModelSerializer):
+    dishes = DishSerializer(source='get_dishes_detail', many=True)
+
+    class Meta:
+        model = Menu
+
         fields = ['title',
                   'description',
                   'created_at',
