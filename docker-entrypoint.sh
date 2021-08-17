@@ -4,8 +4,6 @@
 echo "Collect static files"
 python manage.py collectstatic --noinput
 
-
-
 # Wait for postgress initialization
 wait-for-it db:5432 -t 120
 
@@ -15,6 +13,9 @@ wait-for-it db:5432 -t 120
 # Apply database migrations
 echo "Apply database migrations"
 python manage.py migrate
+
+# Initial data load command
+python manage.py maybe_init_data
 
 # Start server
 echo "Starting server"
