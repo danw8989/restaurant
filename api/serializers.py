@@ -30,6 +30,8 @@ class DishSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
+    dishes = serializers.PrimaryKeyRelatedField(queryset=Dish.objects.all(), many=True)
+
     class Meta:
         model = Menu
 
@@ -38,11 +40,12 @@ class MenuSerializer(serializers.ModelSerializer):
                   'description',
                   'created_at',
                   'modified_at',
+                  'dishes',
                   ]
 
 
 class MenuDetailSerializer(serializers.ModelSerializer):
-    dishes = DishSerializer(source='get_dishes_detail', many=True)
+    dishes = DishSerializer(many=True, read_only=True)
 
     class Meta:
         model = Menu
@@ -51,4 +54,5 @@ class MenuDetailSerializer(serializers.ModelSerializer):
                   'description',
                   'created_at',
                   'modified_at',
-                  'dishes', ]
+                  'dishes',
+                  ]
