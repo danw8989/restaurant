@@ -1,3 +1,4 @@
+
 from api.models import Dish, Menu
 from django.http import Http404
 from django.contrib.auth.models import User, Group
@@ -7,6 +8,7 @@ from rest_framework.response import Response
 from api.serializers import DishSerializer, MenuDetailSerializer, MenuSerializer, UserSerializer, GroupSerializer
 from .perms import IsGetOrIsAuthenticated
 from django.db.models import Count
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -83,12 +85,15 @@ class ListMenus(APIView):
     permission_classes = [IsGetOrIsAuthenticated]
 
     def get(self, request, format=None):
-        menus = None
+        menus = Menu.objects.all()
+        search_string = request.GET.get('search_title')
+        if search_string:
+            menus = menus.filter(title__icontains=search_string)
         if 'sort_by' in request.GET:
             if request.GET.get('sort_by') == 'title':
-                menus = Menu.objects.all().order_by('title')
-            elif request.GET.get('sort_by_name') == 'dish_count':
-                menus = Menu.objects.all().order_by('dish_count')
+                menus = menus.order_by('title')
+            elif request.GET.get('sort_by') == 'dish_count':
+                menus = menus.order_by('dish_count')
             else:
                 return Response(
                     {
@@ -96,8 +101,7 @@ class ListMenus(APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        if len(request.GET) == 0:
-            menus = Menu.objects.all()
+
         serializer = MenuSerializer(menus, many=True)
         return Response(serializer.data)
 
