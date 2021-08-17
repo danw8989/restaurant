@@ -5,6 +5,8 @@ volumes:
 
 services:
   db:
+    ports:
+      - "5000:5432"
     image: postgres:12
     volumes:
       - ./data/db:/var/lib/postgresql/data
