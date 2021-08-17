@@ -49,3 +49,6 @@ env/
 
 # Secrets
 secrets.json
+
+# pg data
+/data
