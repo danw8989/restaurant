@@ -19,7 +19,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['title',
+        fields = ['id',
+                  'title',
                   'description',
                   'price',
                   'prepare_time',
@@ -32,7 +33,8 @@ class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
 
-        fields = ['title',
+        fields = ['id',
+                  'title',
                   'description',
                   'created_at',
                   'modified_at',
