@@ -9,6 +9,7 @@ django-debug-toolbar = "*"
 psycopg2 = "*"
 djangorestframework = "*"
 gunicorn = "*"
+drf-yasg = "*"
 
 [dev-packages]
 autopep8 = "*"

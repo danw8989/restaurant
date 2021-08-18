@@ -1,6 +1,4 @@
-from django.shortcuts import redirect
+#from django.conf.urls import url
+from rest_framework_swagger.views import get_swagger_view
 
-def index(request):
-    response = redirect('/api/menus/')
-    return response
-
+schema_view = get_swagger_view(title='Restaurant API')

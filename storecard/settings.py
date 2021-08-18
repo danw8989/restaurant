@@ -41,11 +41,12 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'debug_toolbar',
     'rest_framework',
+    'drf_yasg',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
 }
 
 EMAIL_HOST = 'smtp.mailtrap.io'
@@ -94,8 +95,8 @@ DATABASES = {
         'NAME': 'restaurant_db',
         'USER': 'postgres',
         'PASSWORD': 'resto',
-        'HOST': 'db',
-        #'HOST': '127.0.0.1',
+        #'HOST': 'db',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
