@@ -31,38 +31,58 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class ListDishesAPIView(ListAPIView):
-    """Lists all dishes from the database"""
+    """
+    Lists all dishes from the database
+    """
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
+
+
 class CreateDishAPIView(CreateAPIView):
-    """Creates a new dish"""
+    """
+    Creates a new dish
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
 
 
 class UpdateDishAPIView(UpdateAPIView):
-    """Updates dish instance with id provided"""
+    """
+    Updates dish instance with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
 
 
 class DeleteDishAPIView(DestroyAPIView):
-    """Deletes dish instance with id provided"""
+    """
+    Deletes dish instance with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
 
 
 class RetrieveDishAPIView(RetrieveAPIView):
-    """Retrieves dish instance with id provided"""
+    """
+    Retrieves dish instance with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
 
+
 class ListMenuAPIView(ListAPIView):
-    """Lists all menus from the database"""
+    """
+    Lists all menus from the database\n
+    **PARAMS**\n
+    **sort_by** -- sort by title or dish_count\n
+    **search_title** -- search by menu title\n
+    **created** -- filter out menus created after provided date\n
+    **modified** -- filter out menus modified after provided date\n
+    """
     serializer_class = MenuSerializer
 
     def get_queryset(self):
@@ -82,40 +102,49 @@ class ListMenuAPIView(ListAPIView):
             elif self.request.query_params.get('sort_by') == 'dish_count':
                 menus = menus.order_by('dish_count')
             else:
-                return Response(
+                return []
+                """ return Response(
                     {
                         "Error": "Value of the parameter 'sort_by' cant be other than 'title' or 'dish_count'",
                     },
                     status=status.HTTP_400_BAD_REQUEST
-                )
+                ) """
 
         #serializer = MenuSerializer(menus, many=True)
         return menus
 
 
 class CreateMenuAPIView(CreateAPIView):
-    """Creates a new menu instance"""
+    """
+    Creates a new menu instance
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
 
 class UpdateMenuAPIView(UpdateAPIView):
-    """Updates menu instance with id provided"""
+    """
+    Updates menu instance with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
 
 class DeleteMenuAPIView(DestroyAPIView):
-    """Deletes menu instance with id provided"""
+    """
+    Deletes menu instance with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
 
 class RetrieveMenuAPIView(RetrieveAPIView):
-    """Retrieves menu instance (with detail) with id provided"""
+    """
+    Retrieves menu instance (with detail) with id provided
+    """
     permissions = [permissions.IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuDetailSerializer
