@@ -94,7 +94,7 @@ class ListMenuAPIView(ListAPIView):
 
 
 class CreateMenuAPIView(CreateAPIView):
-    """Creates a new menu"""
+    """Creates a new menu instance"""
     permissions = [permissions.IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
