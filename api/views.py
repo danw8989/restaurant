@@ -1,10 +1,12 @@
 
+from rest_framework import generics
 from api.models import Dish, Menu
 from django.http import Http404
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView
 from api.serializers import DishSerializer, MenuDetailSerializer, MenuSerializer, UserSerializer, GroupSerializer
 from .perms import IsGetOrIsAuthenticated
 from django.db.models import Count
@@ -28,77 +30,56 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ListDishes(APIView):
-    """
-    Retrieve list of dishes or post a new dish
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        dish = Dish.objects.all()
-        serializer = DishSerializer(dish, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = DishSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ListDishesAPIView(ListAPIView):
+    """Lists all dishes from the database"""
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
+class CreateDishAPIView(CreateAPIView):
+    """Creates a new dish"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
 
 
-class DishDetail(APIView):
-    """
-    Retrieve, update or delete a dish instance.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self, pk):
-        try:
-            return Dish.objects.get(pk=pk)
-        except Dish.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        dish = self.get_object(pk)
-        serializer = DishSerializer(dish)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        dish = self.get_object(pk)
-        serializer = DishSerializer(dish, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        dish = self.get_object(pk)
-        dish.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class UpdateDishAPIView(UpdateAPIView):
+    """Updates dish instance with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
 
 
-class ListMenus(APIView):
-    """
-    Retrieve list of menus or post a new menu
-    """
-    permission_classes = [IsGetOrIsAuthenticated]
+class DeleteDishAPIView(DestroyAPIView):
+    """Deletes dish instance with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
 
-    def get(self, request, format=None):
+
+class RetrieveDishAPIView(RetrieveAPIView):
+    """Retrieves dish instance with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
+
+class ListMenuAPIView(ListAPIView):
+    """Lists all menus from the database"""
+    serializer_class = MenuSerializer
+
+    def get_queryset(self):
         menus = Menu.objects.all()
-        search_string = request.GET.get('search_title')
-        added_string = request.GET.get('created')
-        modified_string = request.GET.get('modified')
+        search_string = self.request.query_params.get('search_title')
+        added_string = self.request.query_params.get('created')
+        modified_string = self.request.query_params.get('modified')
         if search_string:
             menus = menus.filter(title__icontains=search_string)
         if added_string:
             menus = menus.filter(created_at__gte=added_string)
         if modified_string:
             menus = menus.filter(modified_at__gte=modified_string)
-        if 'sort_by' in request.GET:
-            if request.GET.get('sort_by') == 'title':
+        if 'sort_by' in self.request.query_params:
+            if self.request.query_params.get('sort_by') == 'title':
                 menus = menus.order_by('title')
-            elif request.GET.get('sort_by') == 'dish_count':
+            elif self.request.query_params.get('sort_by') == 'dish_count':
                 menus = menus.order_by('dish_count')
             else:
                 return Response(
@@ -108,47 +89,33 @@ class ListMenus(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        serializer = MenuSerializer(menus, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-
-        serializer = MenuSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #serializer = MenuSerializer(menus, many=True)
+        return menus
 
 
-class MenuDetail(APIView):
-    """
-    Retrieve, update or delete a menu instance.
-    """
-    permission_classes = [permissions.IsAuthenticated]
+class CreateMenuAPIView(CreateAPIView):
+    """Creates a new menu"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
 
-    def get_object(self, pk):
-        try:
-            return Menu.objects.get(pk=pk)
-        except Menu.DoesNotExist:
-            raise Http404
 
-    def get(self, request, pk, format=None):
-        try:
-            menu = Menu.objects.prefetch_related('dishes').get(pk=pk)
-        except Menu.DoesNotExist:
-            raise Http404
-        serializer = MenuDetailSerializer(menu)
-        return Response(serializer.data)
+class UpdateMenuAPIView(UpdateAPIView):
+    """Updates menu instance with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
 
-    def put(self, request, pk, format=None):
-        menu = self.get_object(pk)
-        serializer = MenuSerializer(menu, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        menu = self.get_object(pk)
-        menu.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class DeleteMenuAPIView(DestroyAPIView):
+    """Deletes menu instance with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+
+
+class RetrieveMenuAPIView(RetrieveAPIView):
+    """Retrieves menu instance (with detail) with id provided"""
+    permissions = [permissions.IsAuthenticated]
+    queryset = Menu.objects.all()
+    serializer_class = MenuDetailSerializer
