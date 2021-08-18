@@ -87,8 +87,14 @@ class ListMenus(APIView):
     def get(self, request, format=None):
         menus = Menu.objects.all()
         search_string = request.GET.get('search_title')
+        added_string = request.GET.get('created')
+        modified_string = request.GET.get('modified')
         if search_string:
             menus = menus.filter(title__icontains=search_string)
+        if added_string:
+            menus = menus.filter(created_at__gte=added_string)
+        if modified_string:
+            menus = menus.filter(modified_at__gte=modified_string)
         if 'sort_by' in request.GET:
             if request.GET.get('sort_by') == 'title':
                 menus = menus.order_by('title')
