@@ -12,6 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV PORT=8000
 ENV DEBUG=1
+ENV TZ=Europe/Warsaw
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -22,10 +23,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-venv \
         git \
         wait-for-it \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+        cron
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/* 
 
+# configure and apply cron
+COPY mail-cron /etc/cron.d/mail-cron
+RUN chmod 0644 /etc/cron.d/mail-cron
+RUN crontab /etc/cron.d/mail-cron
+RUN touch /var/log/cron.log
+RUN cron
 
 # install environment dependencies
 RUN pip3 install --upgrade pip 
