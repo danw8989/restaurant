@@ -1,0 +1,1 @@
+0 10 * * * python manage.py send_mail_report

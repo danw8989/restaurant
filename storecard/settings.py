@@ -48,6 +48,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = 'c0b80aeeb19b81'
+EMAIL_HOST_PASSWORD = 'c8481c3d182c35'
+EMAIL_PORT = '2525'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

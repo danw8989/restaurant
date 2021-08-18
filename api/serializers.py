@@ -17,6 +17,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class DishSerializer(serializers.ModelSerializer):
+    def get_mail_description(self):
+        return f"Dish name: {self.data.get('title')}\nDescription: {self.data.get('description')}\nPrice: {self.data.get('price')}\nTime to prepare: {self.data.get('prepare_time')}\nVegetarian: {'Yes' if self.data.get('is_vegetarian') else 'No'}\n"
     class Meta:
         model = Dish
         fields = ['id',
