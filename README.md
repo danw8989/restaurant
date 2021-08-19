@@ -1,0 +1,12 @@
+# Installation guide
+
+Just build and run docker containers
+```
+docker-compose up --build -d
+```
+
+Then log into webapp container and create django superuser
+
+```
+python manage.py createsuperuser
+```
