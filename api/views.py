@@ -1,4 +1,6 @@
 
+from api.filters import MenuFilter
+from django_filters import rest_framework as filters
 from rest_framework import generics
 from api.models import Dish, Menu
 from django.http import Http404
@@ -77,41 +79,11 @@ class RetrieveDishAPIView(RetrieveAPIView):
 class ListMenuAPIView(ListAPIView):
     """
     Lists all menus from the database\n
-    **PARAMS**\n
-    **sort_by** -- sort by title or dish_count\n
-    **search_title** -- search by menu title\n
-    **created** -- filter out menus created after provided date\n
-    **modified** -- filter out menus modified after provided date\n
     """
+    queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-
-    def get_queryset(self):
-        menus = Menu.objects.all()
-        search_string = self.request.query_params.get('search_title')
-        added_string = self.request.query_params.get('created')
-        modified_string = self.request.query_params.get('modified')
-        if search_string:
-            menus = menus.filter(title__icontains=search_string)
-        if added_string:
-            menus = menus.filter(created_at__gte=added_string)
-        if modified_string:
-            menus = menus.filter(modified_at__gte=modified_string)
-        if 'sort_by' in self.request.query_params:
-            if self.request.query_params.get('sort_by') == 'title':
-                menus = menus.order_by('title')
-            elif self.request.query_params.get('sort_by') == 'dish_count':
-                menus = menus.order_by('dish_count')
-            else:
-                return []
-                """ return Response(
-                    {
-                        "Error": "Value of the parameter 'sort_by' cant be other than 'title' or 'dish_count'",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                ) """
-
-        #serializer = MenuSerializer(menus, many=True)
-        return menus
+    #filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = MenuFilter
 
 
 class CreateMenuAPIView(CreateAPIView):

@@ -10,6 +10,7 @@ psycopg2 = "*"
 djangorestframework = "*"
 gunicorn = "*"
 drf-yasg = "*"
+django-filter = "*"
 
 [dev-packages]
 autopep8 = "*"
