@@ -175,7 +175,6 @@ class MenuTestCase(APITestCase):
         response = self.client.put(
             '/api/menu/1/', data, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
 
     def test_search_title(self):
         self.add_test_menu()
@@ -221,15 +220,12 @@ class MenuTestCase(APITestCase):
         self.assertEqual(len(response.json()), 1)
 
     def test_order(self):
-        sample_menu = Menu(id=1, title='a',
-                           description='a')
-        sample_menu.save()
-        sample_menu = Menu(id=2, title='c',
-                           description='c')
-        sample_menu.save()
-        sample_menu = Menu(id=3, title='b',
-                           description='b')
-        sample_menu.save()
+        Menu.objects.create(id=1, title='a',
+                            description='a')
+        Menu.objects.create(id=2, title='c',
+                            description='c')
+        Menu.objects.create(id=3, title='b',
+                            description='b')
 
         response = self.client.get("/api/menus/?order_by=title")
         self.assertEqual(response.json()[0]['title'], 'a')
