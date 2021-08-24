@@ -7,6 +7,7 @@ from rest_framework import status
 
 import json
 from datetime import datetime, timedelta
+from django.utils.timezone import get_current_timezone
 
 
 class DishTestCases(APITestCase):
@@ -185,7 +186,7 @@ class MenuTestCase(APITestCase):
 
     def test_created_at(self):
         self.add_test_menu()
-        now = datetime.now()
+        now = datetime.now(tz=get_current_timezone())
         response = self.client.get(
             f"/api/menus/?created_at={now.strftime('%Y-%m-%d')}")
         self.assertEqual(len(response.json()), 1)
@@ -203,7 +204,7 @@ class MenuTestCase(APITestCase):
 
     def test_modified_at(self):
         self.add_test_menu()
-        now = datetime.now()
+        now = datetime.now(tz=get_current_timezone())
         response = self.client.get(
             f"/api/menus/?modified_at={now.strftime('%Y-%m-%d')}")
         self.assertEqual(len(response.json()), 1)
